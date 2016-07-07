@@ -32,7 +32,7 @@ and DRY up the views by using partials.
 - Change to the ``starter-code`` directory
 - Make sure Mongo is running
 - Run ``npm install``
-- Run ``node db/seeds.js``
+- Run ``node db/seed.js``
 - Run ``nodemon server.js``
 
 After you run all of those commands visit ``localhost:3000/candies`` and make sure that you get a few candies back
