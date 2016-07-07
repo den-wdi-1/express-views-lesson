@@ -184,6 +184,7 @@ name
 
 Solution:
 <details>
+```html
 <h3>Create Candy!</h3>
 <fieldset>
   <form method="POST" action="/candies">
@@ -198,6 +199,7 @@ Solution:
     </div>
   </form>
 </fieldset>
+```
 </details>
 
 To add partial to the ``index`` template all we need to do is add:
