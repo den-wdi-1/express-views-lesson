@@ -2,10 +2,10 @@ var Candy = require('../models/Candy');
 
 // Index
 function getAll(request, response){
-  Candy.find({}, function(error, candies){
+  Candy.find({}, function(error, dbCandies){
     if(error) response.json({message: 'Could not find candy b/c:' + error});
 
-    response.json(candies);
+    response.json(dbCandies);
   });
 }
 

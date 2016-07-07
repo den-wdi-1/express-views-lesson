@@ -13,7 +13,7 @@
 - Write express controllers and models
 - Connect Express models to Mongoose/MongoDB
 
-## Views in Express - Intro (5 mins)
+## Views in Express
 
 Some times we want to render the HTML directly from server. Some examples of why we might want to do this are:
 - SEO to ensure that the words that appear to a user appear to search engines
@@ -21,15 +21,16 @@ Some times we want to render the HTML directly from server. Some examples of why
 - Large JavaScript downloads for pages with limited functionality
 
 Rendering the HTML is often called a view. Using Express out of the box, the view engine is Jade - an engine that 
-relies on white space.  But we're familar with Handlebars. We can actually use Handlebars to create HTML on the 
+relies on white space.  But we're familiar with Handlebars. We can actually use Handlebars to create HTML on the 
 server that we can then send as a response.
 
-We are going to return to our `candies` app to focus on how to add views using Handelbars, pass data to those views,
+We are going to return to our `candies` app to focus on how to add views using Handlebars, pass data to those views,
 and DRY up the views by using partials.
 
 ### Setting up the current app
 - Clone the repo
 - Change to the ``starter-code`` directory
+- Make sure Mongo is running
 - Run ``npm install``
 - Run ``node db/seeds.js``
 - Run ``nodemon server.js``
@@ -49,10 +50,10 @@ Now, let's take a look at our `server.js` file and add the following:
 
 ```javascript
 var handlebars = require('express-handlebars');
-//
+// other code
 
 app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', handlebars({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 ```
 
@@ -65,14 +66,15 @@ folder.  After adding this, our Node app's view folder will look like:
 It won't check for an existing path but it will transform the path string.
 
 The second app.set() tells Express to use the Handlebars templating engine. This allows you to use Handlebars 
-templates to render your HTML. We also have set up a layout of main.handlebars. A layout is a template file that 
+templates to render your HTML. We also have set up a layout of ``main.handlebars``. A layout is a template file that 
 includes many of the basic page elements. We'll go over layouts in more detail in the next section.
 
 Since we're ready to use `.handelbars` now, let's set up our file structure to make sure our application can call the files properly. Create the following folder structure:
 
 ```
 - views/
-----main.handlebars
+----layouts
+--------main.handlebars
 
 ```
 
@@ -117,7 +119,7 @@ Some potential answers:
 </details>
 
 ## Building the index page
-Now that we have the layout setup we can start working on the indivdaul webpages we want to view. Lets start by 
+Now that we have the layout setup we can start working on the individual web pages we want to view. Lets start by 
 working on our first page the index page. For this page we want to add some styling and show all of the candies in 
 our Mongo database. 
 
@@ -138,26 +140,47 @@ We start by making a Handlebars template. Let's add the following template ``vie
 </div>
 ```
 
-Changing the controller
+Now we can user the ``render`` method of ``response`` object in our route callback to render the Handlebars template.
+How do we do this? 
 
+Look in ``controllers/candies.js`` file. In the ``getAll`` function right now we're returning JSON but we want to 
+user Handlebars. This is super easy we change 
 
-### Setting up the app
-A quick aside on setting up the app. To actually view the app locally we need to 
+```javascript
+  response.json(dbCandies);
+```
+
+to 
+
+```javascript
+  response.render('index', {candies: dbCandies});
+```
+
+The first argument 'index' says which view to use and object contains the information to pass to Handlebars.  In 
+this case we have a ``candies`` object in our template and we want the ``dbCandies`` object to take its place in
+this version of template.
+
+Take 3 minutes to add the following to your copy of the repo:
+
+- install Handlebars
+- the main.handlebars layout
+- the index.handlebars view 
 
 ## Partials
-Some HTML is
+Some HTML is used over and over in your app. One example is to a form to create a candy. Our index page is pretty
+bland right now. Let's make it more functional by adding a create candy form.
 
 ##Excerise 
-
-Ok, you've done this before.  Set up your form real quick in `candy/form.handlebars` with:
+This partial will be just HTML so let's try to write about it independently. Set up your form real quick in 
+`views/partials/form.handlebars` with:
 
 - A h3 tag that says "Create Candy!"
-- Surrond your form with a fieldset tag. This will help bootstrap make the form look pretty 
+- Surround your form with a fieldset tag. This will help bootstrap make the form look pretty.
 - A form with a POST method that submits to the `/candies` endpoint
-- Put the 
 - Two inputs for name and color that have the css class `form-control` and placeholders that are the same as the 
 name
 - A submit button
+- Around each input and the submit tag add div with classes ``form-group`` and ``col-md-4``.
 
 Solution:
 <details>
@@ -177,189 +200,28 @@ Solution:
 </fieldset>
 </details>
 
-#### More Middleware We Might Use:
-* [body-parser](https://www.npmjs.com/package/body-parser)
-* [method-override](https://www.npmjs.com/package/method-override)
-* [path](https://docs.nodejitsu.com/articles/file-system/how-to-use-the-path-module/)
-* [morgan](https://www.npmjs.com/package/morgan)
-
-
-<!--
-> Note: Provide students with the correct answer once time is up
-
-```html
-<h3>Create Candy!</h3>
-<fieldset>
-  <form method="POST" action="/candies">
-    <div class="form-group col-md-4">
-      <input name="name" class="form-control" placeholder="Name"/>
-    </div>
-    <div class="form-group col-md-4">
-      <input name="color"  class="form-control" placeholder="Color"/>
-    </div>
-      <div class="form-group col-md-4">
-        <input class="btn btn-primary col-md-12" type="submit" value="Submit">
-      </div>
-  </form>
-</fieldset>
-```
--->
-
-## Set up our layout to iterate over data - Catch-up (15 mins)
-
-We'll create an index page that will double as our form.  But first let's make sure our application is set up to 
-pass data from our database to our views if a user visits the `/candies` endpoint.
-
-First, in our `config/routes.js` file, let's make sure our app can both get a list of all the candies and post a new candy from the same endpoint:
-
+To add partial to the ``index`` template all we need to do is add:
 ```javascript
-var candiesController = require('../controllers/candies');
-
-// http://localhost:3000/candies
-router.route('/candies')
-
-//GET all candies
-   .get(candiesController.getAll)
-
-//POST a new blob
-   .post(candiesController.createCandy);
+ {{> createCandyForm }}
 ```
 
-First, we require the controllers, then we set the candies routes and the `GET` AND `POST` actions that will occur when hitting this endpoint.  Now let's define these methods in our controller: `.getAll` and `.createCandy`.  We'll need to set up error handling and serve the response to the correct view with `.render`.  First, let's start with the `.getAll` function, together:
-
-```javascript
-// GET
-function getAll(request, response) {
-  Candy.find(function(error, candies) {
-    if(error) response.json({message: 'Could not find any candy'});
-
-    // response.json({message: candies});
-    response.render('layout', {candies: candies});
-  });
-}
-```
-
-## Write a `createCandy` method that will pull from `name` and `color` inputs - Independent Practice (5 mins)
-
-```javascript
-// POST
-function createCandy(request, response) {
-
-  // fill in your code here
-
-  candy.save(function(error) {
-    if(error) response.json({messsage: 'Could not ceate candy b/c:' + error});
-
-    response.redirect('/candies');
-  });  
-}
-```
-
-<!--
-> Note: Provide students with the correct answer once time is up
-
-    ```
-    console.log('in POST');
-    console.log('body:',request.body);
-    var candy = new Candy({name: request.body.name, color: request.body.color});
-    candy.save();
-
-    ```
--->
-
-
-## Let's make our layout! Code along (15 mins)
-
-First, all the header stuff is exactly the same as it would be in a `.html` file - in `layout.ejs`:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Candy App</title>
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="stylesheets/main.css" />
-</head>
-```
-
-Again, even though this is an `.ejs` file we're able to write html because we've set up our app to use the ejs templating engine, which can render HTML with embedded JavaScript.
-
-Now, we're going to do two things.  First, because we're assuming we're at the `/candies` endpoint, we'll have the `canides` object with all of our candies and the associated attributes.  So let's iterate over that object with JavaScript.  Just like you would in Ruby, you specify that what's being read is JavaScript with opening and closing `<% %>`, if you want the code to execute; `<%= %>` if you want the code to execute and render on the browser. 
-
-> Note: Recent versions of EJS have [a few more options](https://www.npmjs.com/package/ejs#tags)
-
-So let's create a `<body>` and first, let's show all of our candies, with the name and color:
-
-```html
-<body>
-
-</body>
-```
-
-Now we can use partials within our layout.ejs page.  The method is `include` instead of `render`:
-
-```html
-...
-    <hr>
-    <div class="container">
-        <% include ./partials/candy/form %>
-    </div>
-...
-```
-
-Now your `layout.ejs` page should look like this:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Candy App</title>
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="stylesheets/main.css" /></head>
-<body>
-    <h1>
-        <a target="_blank" href="https://www.youtube.com/watch?v=mKli0y-Xr-Q">Candy Shoppe</a>
-    </h1>
-    <div class="container">
-    <% for(var i=0; i< candies.length; i++) {  %>
-    <ul>
-      <li><b>Name : </b> <%= candies[i].name %></li>
-      <li><b>Color : </b> <%= candies[i].color %></li>
-    </ul>
-    <% } %>
-    </div>
-
-    <hr>
-    <div class="container">
-        <% include ./partials/candy/form %>
-    </div>
-
-</body>
-</html>
-```
-
-
-## Independent Practice (15 mins)
+## Independent Practice 
 
 > ***Note:*** This can be a pair programming activity or done independently
 
 Expand on this application by doing the following:
 
-- Add an update link with the `link_to` helper to each candy on your `/candies` page
+- Add a new route to make a separate new candy page using the partial
 - Create an update page where users can update information about their candy
-  - The update functionality is written for you already!
-- Create a footer as a separate partial and render it in the layout.ejs file
+  - The update controller functionality is written for you already!
+- Create a footer as a separate partial and render it in the main.handlebars file
   - In the footer add in "Candies ©"
 
-Use these [docs](http://www.embeddedjs.com/getting_started.html).
+Use these [docs](https://github.com/ericf/express-handlebars).
+
+## Conclusion 
+- Describe how to configure your Express app to use Handlebars.
+- Use Handlebars templates 
+- Explain how Handlebars lets us render dynamic data on a particular view.
 
 
-## Conclusion (5 mins)
-- Describe the difference between `ejs` views and partials.
-- Describe how to configure your Express app to use `ejs`.
-- Explain how `ejs` lets us render dynamic data on a particular view.
-- Identify some middleware we are using and explain why you might or might not use it again.
