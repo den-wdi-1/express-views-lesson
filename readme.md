@@ -204,7 +204,7 @@ Solution:
 
 To add partial to the ``index`` template all we need to do is add:
 ```javascript
- {{> createCandyForm }}
+ {{> form }}
 ```
 
 ## Independent Practice 
