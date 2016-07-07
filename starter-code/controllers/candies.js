@@ -1,12 +1,25 @@
 var Candy = require('../models/Candy');
 
-// GET
+// Index
+function getAll(request, response){
+  Candy.find({}, function(error, candies){
+    if(error) response.json({message: 'Could not find candy b/c:' + error});
 
+    response.json(candies);
+  });
+}
 
-// POST
+// Create
+function createCandy(request, response){
+  var newCandy = new Candy({name: request.body.name, color: request.body.color});
+  newCandy.save(function(error) {
+    if(error) response.json({messsage: 'Could not create candy b/c:' + error});
 
+    response.json(newCandy);
+  });
+}
 
-// GET
+// Show 
 function getCandy(request, response) {
   var id = request.params.id;
 

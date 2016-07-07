@@ -3,9 +3,6 @@ var path = require('path'); // lets us normalize path strings to different views
 var logger = require('morgan'); // for debugging
 var bodyParser = require('body-parser');
 var app = express();
-var methodOverride = require('method-override'); // allows POST method to be used for PUT and/or DELETE
-
-var helpers = require('express-helpers'); // we can use <%- link_to ... %> and other methods similar to ERB in Rails
 
 var mongoose = require('mongoose');
 
@@ -18,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-// Set up our app to accept to use EJS
+// Set up our app to accept to use Handlebars
 //
 //
 // 
