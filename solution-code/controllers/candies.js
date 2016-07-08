@@ -15,7 +15,7 @@ function createCandy(request, response){
   newCandy.save(function(error) {
     if(error) response.json({messsage: 'Could not create candy b/c:' + error});
 
-    response.json(newCandy);
+    response.redirect('/candies');
   });
 }
 

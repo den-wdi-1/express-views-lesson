@@ -12,7 +12,7 @@ router.route('/candies/')
   .get(candiesController.getAll)
 
   //POST a new blob
-  .get(candiesController.createCandy);
+  .post(candiesController.createCandy);
 
 
 router.route('/candies/:id')
