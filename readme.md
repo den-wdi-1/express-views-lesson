@@ -32,7 +32,7 @@ and DRY up the views by using partials.
 - Change to the ``starter-code`` directory
 - Make sure Mongo is running
 - Run ``npm install``
-- Run ``node db/seeds.js``
+- Run ``node db/seed.js``
 - Run ``nodemon server.js``
 
 After you run all of those commands visit ``localhost:3000/candies`` and make sure that you get a few candies back
@@ -170,7 +170,7 @@ Take 3 minutes to add the following to your copy of the repo:
 Some HTML is used over and over in your app. One example is to a form to create a candy. Our index page is pretty
 bland right now. Let's make it more functional by adding a create candy form.
 
-##Excerise 
+###Excerise 
 This partial will be just HTML so let's try to write about it independently. Set up your form real quick in 
 `views/partials/form.handlebars` with:
 
@@ -184,6 +184,7 @@ name
 
 Solution:
 <details>
+```html
 <h3>Create Candy!</h3>
 <fieldset>
   <form method="POST" action="/candies">
@@ -198,11 +199,12 @@ Solution:
     </div>
   </form>
 </fieldset>
+```
 </details>
 
 To add partial to the ``index`` template all we need to do is add:
 ```javascript
- {{> createCandyForm }}
+ {{> form }}
 ```
 
 ## Independent Practice 
