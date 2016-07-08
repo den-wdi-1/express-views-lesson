@@ -1,0 +1,14 @@
+<h1>
+  <a target="_blank" href="https://www.youtube.com/watch?v=mKli0y-Xr-Q">Candy Shoppe</a>
+</h1>
+<div class="container">
+  
+    {{#each candies}} 
+    <ul>
+      <li> <strong>Name : </strong> {{name}} </li>
+      <li> <strong>Color : </strong> {{color}} </li>
+    </ul>
+    {{/each}}
+
+	{{> createCandyForm }} 
+</div>
